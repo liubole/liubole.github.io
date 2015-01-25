@@ -1,1 +1,1 @@
-{"name":"liubole","number_of_posts_per_page":7,"disqus_shortname":"","posts":[{"title":"hello world","date":"2015-01-25","tags":"hello test","path":"hello.html"}],"pages":[]}
+{"name":"liubole","number_of_posts_per_page":7,"disqus_shortname":"","posts":[{"title":"hello","date":"2015-1-25","tags":"test","path":"hello2.html"},{"title":"hello world","date":"2015-01-25","tags":"hello test","path":"hello.html","num":0,"type":"post","active":false}],"pages":[]}
