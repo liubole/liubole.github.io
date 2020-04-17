@@ -7,14 +7,14 @@ title: '夜色黎明'
 subtitle: ''
 description: '知止 知足 知皈'
 keywords:
-author: 刘伯乐
+author: Tricolor
 language: zh-CN
 timezone: 'Asia/Shanghai'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: 'https://liubole.github.io'
-root: '/blog/'
+url: https://liubole.github.io
+root: /blog/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -23,7 +23,7 @@ pretty_urls:
 
 # Directory
 source_dir: source
-public_dir: 'blog'
+public_dir: blog
 tag_dir: tags
 archive_dir: archives
 category_dir: categories
@@ -108,12 +108,12 @@ exclude:
   # 不要用 exclude 来忽略 'source/_posts/' 中的文件。你应该使用 'skip_render'，或者在要忽略的文件的文件名之前加一个下划线 '_'
   # 在这里配置一个 - "_posts/hello-world.md" 是没有用的。
 ignore:
-  # Ignore any folder named 'foo'.
-  - "**/foo"
-  # Ignore 'foo' folder in 'themes/' only.
-  - "**/themes/*/foo"
+  # Ignore any folder named 'next'.
+  - "**/next"
+  # Ignore 'next' folder in 'themes/' only.
+  - "**/themes/*/next"
   # Same as above, but applies to every subfolders of 'themes/'.
-  - "**/themes/**/foo"
+  - "**/themes/**/next"
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/
