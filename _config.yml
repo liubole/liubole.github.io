@@ -94,6 +94,8 @@ include:
   - "_css/*"
   # 包含 'source/_css/' 中的任何文件和子目录下的任何文件
   - "_css/**/*"
+  # 包含 'source/_assets/' 中的任何文件和子目录下的任何文件
+  - "_assets/*"
 exclude:
   # 不包括 'source/js/test.js'
   - "js/test.js"
@@ -118,7 +120,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: 'next'
+theme: 'yilia'
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
