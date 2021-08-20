@@ -1,1 +1,2 @@
 hexo clean && hexo generate && hexo deploy
+hexo server 预览
