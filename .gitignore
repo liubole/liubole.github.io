@@ -1,0 +1,9 @@
+/blog
+.DS_Store
+Thumbs.db
+db.json
+*.log
+node_modules/
+.deploy*/
+.idea/
+.deploy_git/
