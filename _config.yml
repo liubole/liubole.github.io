@@ -5,7 +5,7 @@
 # Site
 title: '夜色'
 subtitle: ''
-description: '不踏实的90后农民工'
+description: '农民工'
 keywords:
 author: Tricolor
 language: zh-CN
@@ -124,7 +124,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: 'modified-yilia'
+theme: 'next'
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -133,21 +133,21 @@ deploy:
   repo: git@github.com:liubole/liubole.github.io.git
   branch: blog
 
-jsonContent:
-  meta: false
-  pages: false
-  posts:
-    title: true
-    date: true
-    path: true
-    text: false
-    raw: false
-    content: false
-    slug: false
-    updated: false
-    comments: false
-    link: false
-    permalink: false
-    excerpt: false
-    categories: false
-    tags: true
+#jsonContent:
+#  meta: false
+#  pages: false
+#  posts:
+#    title: true
+#    date: true
+#    path: true
+#    text: false
+#    raw: false
+#    content: false
+#    slug: false
+#    updated: false
+#    comments: false
+#    link: false
+#    permalink: false
+#    excerpt: false
+#    categories: false
+#    tags: true
