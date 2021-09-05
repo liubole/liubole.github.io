@@ -133,6 +133,12 @@ deploy:
   repo: git@github.com:liubole/liubole.github.io.git
   branch: blog
 
+excerpt:
+  depth: 5
+  excerpt_excludes: []
+  more_excludes: []
+  hideWholePostExcerpts: true
+
 #jsonContent:
 #  meta: false
 #  pages: false
