@@ -1,7 +1,7 @@
 
 ---
 title: 深入理解CI框架：数据库的加载过程
-tags: [codeigniter,源码]
+tags: [codeigniter]
 categories: [PHP,codeigniter]
 toc: false
 date: 2017-02-15 16:48:30
