@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"liubole.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="说明：没特别指明的情况下，本文涉及的Codeigniter均为3.1.2版。  本篇文章所展示的代码就是：浓（阉）缩（割）后的codeigniter框架，目的就是让大家看明白ci框架的构成和运行始末。有些地方和CI不一样，比如我这里用了controller基类来加载model和view，实际上CI是通过CI_Loader来做的，希望我这样做不会对你们理解CI框架造成影响。 ###准备工作：  1、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解CI框架：框架如何运转起来（实践篇）">
+<meta property="og:url" content="https://liubole.github.io/2016/12/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%BF%90%E8%BD%AC%E8%B5%B7%E6%9D%A5%EF%BC%88%E5%AE%9E%E8%B7%B5%E7%AF%87%EF%BC%89/index.html">
+<meta property="og:site_name" content="夜色">
+<meta property="og:description" content="说明：没特别指明的情况下，本文涉及的Codeigniter均为3.1.2版。  本篇文章所展示的代码就是：浓（阉）缩（割）后的codeigniter框架，目的就是让大家看明白ci框架的构成和运行始末。有些地方和CI不一样，比如我这里用了controller基类来加载model和view，实际上CI是通过CI_Loader来做的，希望我这样做不会对你们理解CI框架造成影响。 ###准备工作：  1、">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-12-30T06:24:52.000Z">
+<meta property="article:modified_time" content="2021-09-06T12:58:05.687Z">
+<meta property="article:author" content="Tricolor">
+<meta property="article:tag" content="codeigniter">
+<meta property="article:tag" content="源码">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://liubole.github.io/2016/12/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%BF%90%E8%BD%AC%E8%B5%B7%E6%9D%A5%EF%BC%88%E5%AE%9E%E8%B7%B5%E7%AF%87%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://liubole.github.io/2016/12/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%BF%90%E8%BD%AC%E8%B5%B7%E6%9D%A5%EF%BC%88%E5%AE%9E%E8%B7%B5%E7%AF%87%EF%BC%89/","path":"2016/12/30/深入理解CI框架：框架如何运转起来（实践篇）/","title":"深入理解CI框架：框架如何运转起来（实践篇）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解CI框架：框架如何运转起来（实践篇） | 夜色</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">夜色</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Tricolor</p>
+  <div class="site-description" itemprop="description">农民工</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2016/12/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%BF%90%E8%BD%AC%E8%B5%B7%E6%9D%A5%EF%BC%88%E5%AE%9E%E8%B7%B5%E7%AF%87%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解CI框架：框架如何运转起来（实践篇）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-12-30 14:24:52" itemprop="dateCreated datePublished" datetime="2016-12-30T14:24:52+08:00">2016-12-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:58:05" itemprop="dateModified" datetime="2021-09-06T20:58:05+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/codeigniter/" itemprop="url" rel="index"><span itemprop="name">codeigniter</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>说明：没特别指明的情况下，本文涉及的Codeigniter均为3.1.2版。</p>
+<hr>
+<p>本篇文章所展示的代码就是：浓（阉）缩（割）后的codeigniter框架，目的就是让大家看明白ci框架的构成和运行始末。有些地方和CI不一样，比如我这里用了controller基类来加载model和view，实际上CI是通过CI_Loader来做的，希望我这样做不会对你们理解CI框架造成影响。</p>
+<p>###准备工作：</p>
+<blockquote>
+<p>1、apache rewrite</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;RewriteEngine On</span><br><span class="line">RewriteBase /</span><br><span class="line">RewriteCond %&#123;REQUEST_FILENAME&#125; !-f</span><br><span class="line">RewriteCond %&#123;REQUEST_FILENAME&#125; !-d</span><br><span class="line">RewriteRule ^(.*)$ index.php?/$<span class="number">1</span> [L]</span><br></pre></td></tr></table></figure>
+<p>2、目录结构（强烈建议把下面的文件放到域名根目录下 =￣ω￣= ，这关系到index.php的路径解析）：</p>
+</blockquote>
+<ul>
+<li>index.php</li>
+<li>core<br>  controller.php</li>
+<li>controllers<br>  my_controller.php</li>
+<li>models<br>  my_model.php</li>
+<li>views<br>  my_view.php<br>  footer.php<blockquote>
+<p>3、访问路径（域名按实际情况修改）：<br><code>http://www.myphp.com/index.php/my_controller/doTest/p1/p2?p=mm</code></p>
+</blockquote>
+</li>
+</ul>
+<p>###Step1：index.php 入口文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.php</span></span><br><span class="line"><span class="comment">//记得设置url rewrite，所有的请求都要走 index.php</span></span><br><span class="line"><span class="variable">$uri</span> = parse_url(<span class="string">&#x27;http://dummy&#x27;</span> . <span class="variable">$_SERVER</span>[<span class="string">&#x27;REQUEST_URI&#x27;</span>]);</span><br><span class="line"><span class="variable">$query</span> = <span class="keyword">isset</span>(<span class="variable">$uri</span>[<span class="string">&#x27;query&#x27;</span>]) ? <span class="variable">$uri</span>[<span class="string">&#x27;query&#x27;</span>] : <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="variable">$path</span> = <span class="keyword">isset</span>(<span class="variable">$uri</span>[<span class="string">&#x27;path&#x27;</span>]) ? <span class="variable">$uri</span>[<span class="string">&#x27;path&#x27;</span>] : <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="variable">$real_path</span> = trim(substr(<span class="variable">$path</span>, strlen(<span class="variable">$_SERVER</span>[<span class="string">&#x27;SCRIPT_NAME&#x27;</span>])), <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//提取 controllers 和 method</span></span><br><span class="line"><span class="keyword">list</span>(<span class="variable">$class</span>, <span class="variable">$method</span>, <span class="variable">$args_string</span>) = explode(<span class="string">&#x27;/&#x27;</span>, <span class="variable">$real_path</span>, <span class="number">3</span>);</span><br><span class="line"><span class="variable">$args</span> = explode(<span class="string">&#x27;/&#x27;</span>, <span class="variable">$args_string</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//调用方法</span></span><br><span class="line"><span class="keyword">require_once</span>( <span class="keyword">__DIR__</span> . <span class="string">&#x27;/core/controller.php&#x27;</span>);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="keyword">__DIR__</span> . <span class="string">&#x27;/controllers/&#x27;</span> . <span class="variable">$class</span> . <span class="string">&#x27;.php&#x27;</span>);</span><br><span class="line"><span class="variable">$_class</span> = <span class="keyword">new</span> <span class="variable">$class</span>();</span><br><span class="line">call_user_func_array(<span class="keyword">array</span>(<span class="variable">$_class</span>, <span class="variable">$method</span>), <span class="variable">$args</span>);</span><br><span class="line"><span class="variable">$_class</span>-&gt;output();</span><br></pre></td></tr></table></figure>
+<p>###Step2：核心 controller</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//core/controller.php</span></span><br><span class="line"><span class="comment">//所有控制器均继承该基类，model()和view()方法的作用类似CI_Loder里的model()和view()</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$output</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">model</span>(<span class="params"><span class="variable">$name</span>, <span class="variable">$_</span> = <span class="literal">NULL</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$file_path</span> = dirname(<span class="keyword">__DIR__</span>) . <span class="string">&#x27;/models/&#x27;</span> . <span class="variable">$name</span> . <span class="string">&#x27;.php&#x27;</span>;</span><br><span class="line">        <span class="keyword">require_once</span>(<span class="variable">$file_path</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$_</span> ?</span><br><span class="line">            <span class="keyword">new</span> <span class="variable">$name</span>() :</span><br><span class="line">            <span class="keyword">new</span> <span class="variable">$name</span>(array_shift(func_get_args()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">view</span>(<span class="params"><span class="variable">$name</span>, <span class="variable">$data</span> = <span class="keyword">array</span>(<span class="params"></span>)</span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$file_path</span> = dirname(<span class="keyword">__DIR__</span>) . <span class="string">&#x27;/views/&#x27;</span> . <span class="variable">$name</span> . <span class="string">&#x27;.php&#x27;</span>;</span><br><span class="line">        ob_start();</span><br><span class="line">        extract(<span class="variable">$data</span>);</span><br><span class="line">        <span class="keyword">require</span>(<span class="variable">$file_path</span>);</span><br><span class="line">        <span class="variable">$output</span> = ob_get_contents();</span><br><span class="line">        ob_clean();</span><br><span class="line">        @ob_end_clean();</span><br><span class="line">        @ob_end_flush();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;output .= <span class="variable">$output</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">output</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="keyword">$this</span>-&gt;output;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>###Step3：controllers 控制器</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//controllers/my_controller.php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">my_controller</span> <span class="keyword">extends</span> <span class="title">controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">//访问该方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">doTest</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//加载模型</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;my_model = <span class="keyword">$this</span>-&gt;model(<span class="string">&#x27;my_model&#x27;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将值赋值给$this-&gt;data数组</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;data[<span class="string">&#x27;title&#x27;</span>] = <span class="string">&#x27;深入理解CI框架&#x27;</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data[<span class="string">&#x27;args&#x27;</span>] = <span class="keyword">array</span>(<span class="variable">$arg1</span>, <span class="variable">$arg2</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data[<span class="string">&#x27;words&#x27;</span>] = <span class="keyword">$this</span>-&gt;my_model-&gt;upper(<span class="string">&#x27;hello world!&#x27;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//把值传入到view里面</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;view(<span class="string">&#x27;header&#x27;</span>, <span class="keyword">$this</span>-&gt;data);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;view(<span class="string">&#x27;my_view&#x27;</span>, <span class="keyword">$this</span>-&gt;data);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;view(<span class="string">&#x27;footer&#x27;</span>, <span class="keyword">$this</span>-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>###Step4：models 模型</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//models/my_model.php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">my_model</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">//只实现了一个方法，用来演示</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upper</span>(<span class="params"><span class="variable">$word</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> strtoupper(<span class="variable">$word</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>###Step5：views 视图</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//views/my_view.php</span></span><br><span class="line">&lt;div&gt;<span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="variable">$words</span>; <span class="meta">?&gt;</span>&lt;/div&gt;</span><br><span class="line">&lt;div&gt;args: <span class="meta">&lt;?php</span> print_r(<span class="variable">$args</span>);<span class="meta">?&gt;</span>&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//views/header.php</span></span><br><span class="line">&lt;!doctype html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;utf-8&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;<span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="variable">$title</span>;<span class="meta">?&gt;</span>&lt;/title&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;renderer&quot;</span> content=<span class="string">&quot;webkit&quot;</span>&gt;</span><br><span class="line">    &lt;meta http-equiv=<span class="string">&quot;X-UA-Compatible&quot;</span> content=<span class="string">&quot;IE=Edge&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;keyword&quot;</span> content=<span class="string">&quot;&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;description&quot;</span> content=<span class="string">&quot;&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;format-detection&quot;</span> content=<span class="string">&quot;telephone=no&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;apple-mobile-web-app-capable&quot;</span> content=<span class="string">&quot;yes&quot;</span>&gt;</span><br><span class="line">    &lt;meta name=<span class="string">&quot;apple-mobile-web-app-status-bar-style&quot;</span> content=<span class="string">&quot;black&quot;</span>&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//views/footer.php</span></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>###运行结果</p>
+<blockquote>
+<p>运行后的结果是：<br>HELLO WORLD!<br>args: Array ( [0] =&gt; p1 [1] =&gt; p2 )</p>
+</blockquote>
+<p>完。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/codeigniter/" rel="tag"># codeigniter</a>
+              <a href="/tags/%E6%BA%90%E7%A0%81/" rel="tag"># 源码</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/12/24/%E5%90%8E%E5%90%91%E5%BC%95%E7%94%A8%EF%BC%88Back-Reference%EF%BC%89%E4%B8%AD%E7%9A%84%20$&/" rel="prev" title="后向引用（Back-Reference）中的 $&">
+                  <i class="fa fa-chevron-left"></i> 后向引用（Back-Reference）中的 $&
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/02/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B/" rel="next" title="深入理解CI框架：数据库的加载过程">
+                  深入理解CI框架：数据库的加载过程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tricolor</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

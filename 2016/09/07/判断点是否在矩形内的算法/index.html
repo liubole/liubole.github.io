@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"liubole.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="需求描述：有一个 4*4 的方格，用户可以选择起点和落点形成矩形，每次形成的矩形不能重叠，起点可以和落点坐标一样。现已知起点、未选点集合和已选点集合，求落点的集合。 算法重点：转换为判断点P是否在一个矩形内。  ###方法一：建立平面直角坐标系，根据横坐标和纵坐标判断点是否在矩形内。 1234567891011121314&#x2F;** * 判断点是否在矩形内（含边）。p1、p2是矩形的两个对角点。 *">
+<meta property="og:type" content="article">
+<meta property="og:title" content="判断点是否在矩形内的算法">
+<meta property="og:url" content="https://liubole.github.io/2016/09/07/%E5%88%A4%E6%96%AD%E7%82%B9%E6%98%AF%E5%90%A6%E5%9C%A8%E7%9F%A9%E5%BD%A2%E5%86%85%E7%9A%84%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="夜色">
+<meta property="og:description" content="需求描述：有一个 4*4 的方格，用户可以选择起点和落点形成矩形，每次形成的矩形不能重叠，起点可以和落点坐标一样。现已知起点、未选点集合和已选点集合，求落点的集合。 算法重点：转换为判断点P是否在一个矩形内。  ###方法一：建立平面直角坐标系，根据横坐标和纵坐标判断点是否在矩形内。 1234567891011121314&#x2F;** * 判断点是否在矩形内（含边）。p1、p2是矩形的两个对角点。 *">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-09-07T10:06:09.000Z">
+<meta property="article:modified_time" content="2021-09-06T12:59:37.323Z">
+<meta property="article:author" content="Tricolor">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://liubole.github.io/2016/09/07/%E5%88%A4%E6%96%AD%E7%82%B9%E6%98%AF%E5%90%A6%E5%9C%A8%E7%9F%A9%E5%BD%A2%E5%86%85%E7%9A%84%E7%AE%97%E6%B3%95/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://liubole.github.io/2016/09/07/%E5%88%A4%E6%96%AD%E7%82%B9%E6%98%AF%E5%90%A6%E5%9C%A8%E7%9F%A9%E5%BD%A2%E5%86%85%E7%9A%84%E7%AE%97%E6%B3%95/","path":"2016/09/07/判断点是否在矩形内的算法/","title":"判断点是否在矩形内的算法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>判断点是否在矩形内的算法 | 夜色</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">夜色</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Tricolor</p>
+  <div class="site-description" itemprop="description">农民工</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2016/09/07/%E5%88%A4%E6%96%AD%E7%82%B9%E6%98%AF%E5%90%A6%E5%9C%A8%E7%9F%A9%E5%BD%A2%E5%86%85%E7%9A%84%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          判断点是否在矩形内的算法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-09-07 18:06:09" itemprop="dateCreated datePublished" datetime="2016-09-07T18:06:09+08:00">2016-09-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:59:37" itemprop="dateModified" datetime="2021-09-06T20:59:37+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>需求描述：<br>有一个 4*4 的方格，用户可以选择起点和落点形成矩形，每次形成的矩形不能重叠，起点可以和落点坐标一样。现已知起点、未选点集合和已选点集合，求落点的集合。</p>
+<p><strong>算法重点：转换为判断点P是否在一个矩形内。</strong></p>
+<hr>
+<p>###方法一：建立平面直角坐标系，根据横坐标和纵坐标判断点是否在矩形内。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 判断点是否在矩形内（含边）。p1、p2是矩形的两个对角点。</span></span><br><span class="line"><span class="comment"> * 该算法和平面直角坐标系怎么建立无关</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> $rc</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> $p</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> bool</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isInRect</span>(<span class="params"><span class="variable">$rc</span>, <span class="variable">$p</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$xi</span> = (<span class="variable">$p</span>-&gt;x - <span class="variable">$rc</span>-&gt;p1-&gt;x) * (<span class="variable">$p</span>-&gt;x - <span class="variable">$rc</span>-&gt;p2-&gt;x);</span><br><span class="line">    <span class="variable">$yi</span> = (<span class="variable">$p</span>-&gt;y - <span class="variable">$rc</span>-&gt;p1-&gt;y) * (<span class="variable">$p</span>-&gt;y - <span class="variable">$rc</span>-&gt;p2-&gt;y);</span><br><span class="line">    <span class="keyword">return</span> (<span class="variable">$xi</span> &lt;= <span class="number">0</span>) &amp;&amp; (<span class="variable">$yi</span> &lt;= <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>###方法二：假设矩形左、右、上、下分别在直线 L<sub>1</sub>、L<sub>2</sub>、L<sub>3</sub>、L<sub>4</sub> 上，只需要证明点 P 同时在上下、左右直线之间即可。</p>
+<p>过P作一条直线相交于 L<sub>1</sub>、L<sub>2</sub> 的 C<sub>1</sub> 、C<sub>2</sub> ，向量PC<sub>1</sub> 、PC<sub>2</sub> 同向则P在 L<sub>1</sub>、L<sub>2</sub> 之外，反向则在 L<sub>1</sub>、L<sub>2</sub> 之内。同理可判断P是否在 L<sub>3</sub>、L<sub>4</sub> 之间。</p>
+<p>$$ PC_1 = （C_1x - P_x , C_1y - P_y）;   PC_2 = （C_2x - P_x , C_2y - P_y）;$$<br>$$ \frac{C_2x - P_x}{C_1x - P_x } &gt; 0 或 \frac{C_2y - P_y}{C_1y - P_y } &gt; 0 =&gt; PC_1、PC_2 同向 $$<br>$$（C_1x-P_x）^2 + （C_1y-P_y）^2 = 0  =&gt; PC_1为零向量 =&gt; PC_1、PC_2 同向$$<br>$$（C_2x-P_x）^2 + （C_2y-P_y）^2 = 0  =&gt; PC_2为零向量 =&gt; PC_1、PC_2 同向$$</p>
+<p>如果：<br>$$ L_1: y = mx + t_1; $$<br>$$ L_2: y = mx + t_2; $$<br>$$ C_1C_2: y = (m+1)x; $$<br>$$ P_1:(P_1x, P_1y); P_2:(P_3x, P_3y) 是L_1上的两个矩形顶点；$$<br>$$ P_3:(P_3x, P_3y); P_4:(P_4x, P_4y) 是L_2上的两个矩形顶点；$$</p>
+<p>则：</p>
+<p>$$ 若点P和{P_1,P_2,P_3,P_4}中的某一点重合，则P在矩形内；$$<br>$$ 若(t_2 - P_x)<em>(t_1 - P_x)&gt;0, t_1=\frac{P_1yP_2x-P_1xP_2y}{P_2x-P_1x},t_2=\frac{P_3yP_4x-P_3xP_4y}{P_4x-P_3x}则P在矩形内；$$<br>$$ 若(t_2 - P_x)</em>(t_1 - P_x)&gt;0, t_1=\frac{P_1yP_2x-P_1xP_2y}{P_2x-P_1x},t_2=\frac{P_3yP_4x-P_3xP_4y}{P_4x-P_3x}则P在矩形内；$$</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 此处省略n行代码</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>###方法三：以点P为起点，向左作射线，如果射线和矩形的焦点个数是奇数，则P在矩形内。<br>PS：对以下特例不做考虑：1、对于矩形的水平边不作考虑；2、对于矩形的顶点和L相交的情况。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 此处省略m行代码</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>总结：方法一简单实用，方法三可以推广到判断点是否在任意多边形内。</p>
+<hr>
+<p>本文涉及资料：<br><a target="_blank" rel="noopener" href="http://dev.gameres.com/Program/Abstract/Geometry.htm">计算几何算法概览</a></p>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/08/31/%E5%88%A9%E7%94%A8svn%E9%92%A9%E5%AD%90%E6%A3%80%E6%9F%A5%E8%AF%AD%E6%B3%95/" rel="prev" title="利用svn钩子检查语法">
+                  <i class="fa fa-chevron-left"></i> 利用svn钩子检查语法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/09/08/PHP%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E6%8E%92%E5%BA%8F/" rel="next" title="PHP二维数组排序">
+                  PHP二维数组排序 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tricolor</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"liubole.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="消息队列（MessageQueue）：简化业务流程异步处理消息减少组件耦合消减数据峰值 场景1：    支付成功以后，给用户发送优惠券or红包；场景2：    用户注册成功后发送通知邮件or短信；场景3：    活动里面的站内信发送；……总结起来就是，把单个业务简洁化，通过消息系统把不相关的业务连接起来，实现更复杂的业务链，降低整个系统的复杂度。 安装省略。。。 使用四个重要概念：虚拟主机（vho">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rabbitmq分享">
+<meta property="og:url" content="https://liubole.github.io/2016/11/09/rabbitmq%E5%88%86%E4%BA%AB/index.html">
+<meta property="og:site_name" content="夜色">
+<meta property="og:description" content="消息队列（MessageQueue）：简化业务流程异步处理消息减少组件耦合消减数据峰值 场景1：    支付成功以后，给用户发送优惠券or红包；场景2：    用户注册成功后发送通知邮件or短信；场景3：    活动里面的站内信发送；……总结起来就是，把单个业务简洁化，通过消息系统把不相关的业务连接起来，实现更复杂的业务链，降低整个系统的复杂度。 安装省略。。。 使用四个重要概念：虚拟主机（vho">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-11-09T13:58:09.000Z">
+<meta property="article:modified_time" content="2021-09-06T12:54:12.316Z">
+<meta property="article:author" content="Tricolor">
+<meta property="article:tag" content="rabbitmq">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://liubole.github.io/2016/11/09/rabbitmq%E5%88%86%E4%BA%AB/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://liubole.github.io/2016/11/09/rabbitmq%E5%88%86%E4%BA%AB/","path":"2016/11/09/rabbitmq分享/","title":"rabbitmq分享"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>rabbitmq分享 | 夜色</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">夜色</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Tricolor</p>
+  <div class="site-description" itemprop="description">农民工</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2016/11/09/rabbitmq%E5%88%86%E4%BA%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          rabbitmq分享
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-11-09 21:58:09" itemprop="dateCreated datePublished" datetime="2016-11-09T21:58:09+08:00">2016-11-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:54:12" itemprop="dateModified" datetime="2021-09-06T20:54:12+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/rabbitmq/" itemprop="url" rel="index"><span itemprop="name">rabbitmq</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>消息队列（MessageQueue）：<br>简化业务流程<br>异步处理消息<br>减少组件耦合<br>消减数据峰值</p>
+<p>场景1：<br>    支付成功以后，给用户发送优惠券or红包；<br>场景2：<br>    用户注册成功后发送通知邮件or短信；<br>场景3：<br>    活动里面的站内信发送；<br>……<br>总结起来就是，把单个业务简洁化，通过消息系统把不相关的业务连接起来，实现更复杂的业务链，降低整个系统的复杂度。</p>
+<p>安装<br>省略。。。</p>
+<p>使用<br>四个重要概念：虚拟主机（vhost）、交换器（exchange）、队列（queue）、绑定（binding）</p>
+<p>先说交换器和队列，附带消息的说明：</p>
+<p>队列属性（部分）：<br>    名称(queue)：<br>    持久化(durable)：服务重启后是否要恢复<br>    自动删除(auto-delete)：没有消费者时自动删除<br>    其他声明：<br>        消息存在时间(x-message-ttl)：<br>        队列存在时间(x-expires)：<br>交换器属性（部分）：<br>    名称(exchange)：<br>    类型(type)：fanout/direct/topic/headers<br>    持久化(durable)：服务重启后是否要恢复<br>    自动删除(auto-delete)：没有队列使用交换器时自动删除<br>消息（部分）：<br>    消息体(body)<br>    属性（properties）：<br>        投递模式(delivery_mode)：可设置为持久化<br>绑定（exchange-queue）：<br>    和交换器、队列不一样，绑定是一种规则而非实体。</p>
+<p>*持久化和自动删除并不冲突<br>*队列、交换器的属性设置好后就不能修改，除非删掉重建</p>
+<p>在我们的项目中是如何使用RabbitMQ的：</p>
+<ol>
+<li><p>持久化：要达到一般人理解的持久保存消息，需要设置三个地方</p>
+<pre><code>1.将交换机设置成durable；
+2.将队列设置成durable；
+3.将消息的delivery_mode设置成2；
+注意两点：1.缺少任何一个，都无法达成真正持久化消息的目的；
+    2.持久化会消耗额外的性能；</code></pre></li>
+<li><p>自动删除：消息&amp;队列生存时间、“死信队列”这些都是自己设置的。</p>
+<pre><code>消息在队列里存在时间是1分钟，队列本身存在时间是30分钟，过期的消息会被移出到“死信队列”，死信队列里的消息存在7天，死信队列本身存在10天；</code></pre><p>消息消费后ack/nack机制(acknowledgement)：</p>
+<pre><code>如果能保证消息已经被正确消费了，你可以通过ack方法告诉rabbitmq，rabbitmq会删除这条消息；
+反之，你可以调用nack告诉RabbitMQ消费失败（rabbitmq会将消息立马移到“死信队列”），或者什么都不做（等待消息过期被移动到“死信队列”）。</code></pre></li>
+<li><p>发布消息后confirm机制：暂时关闭了这个功能。</p>
+<pre><code>发布消息后，发送者可以通过异步的回调知道消息是否发送成功。</code></pre></li>
+</ol>
+<p>代码：<br>use CI123\Shop\Tool\RabbitMq\Publisher;<br>Publisher::publish(‘coupons.user_coupon.add’, json_encode($coupons));</p>
+<p>use Api\Tool\RabbitMq\Subscriber;<br>Subscriber::subscribe(‘shop_com.add.trade_deliver’, function ($msgObj) {<br>    $message = $msgObj-&gt;body;<br>    Subscriber::ack($msgObj);<br>});</p>
+<p>其他，关于RabbitMQ的知识很多也比较琐碎，建议大家直接提问。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/rabbitmq/" rel="tag"># rabbitmq</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/10/28/linux%20p%E5%91%BD%E4%BB%A4%E7%B2%98%E8%B4%B4%E5%88%B0%E4%BD%95%E5%A4%84/" rel="prev" title="linux p命令粘贴到何处">
+                  <i class="fa fa-chevron-left"></i> linux p命令粘贴到何处
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/12/06/post_get%20%E5%90%8C%E4%B8%80%E4%B8%AA%E5%8F%82%E6%95%B0%E4%BC%A0%E4%B8%A4%E6%AC%A1/" rel="next" title="post_get 同一个参数传两次">
+                  post_get 同一个参数传两次 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tricolor</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

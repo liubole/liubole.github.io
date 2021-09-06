@@ -128,18 +128,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -293,7 +293,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-09-06 19:54:29" itemprop="dateModified" datetime="2021-09-06T19:54:29+08:00">2021-09-06</time>
+        <time title="修改时间：2021-09-06 19:56:46" itemprop="dateModified" datetime="2021-09-06T19:56:46+08:00">2021-09-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -302,10 +302,6 @@
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
           <a href="/categories/markdown/" itemprop="url" rel="index"><span itemprop="name">markdown</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/markdown/%E7%A4%BA%E4%BE%8B/" itemprop="url" rel="index"><span itemprop="name">示例</span></a>
         </span>
     </span>
 
@@ -353,7 +349,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2020/04/15/%E6%B5%8B%E8%AF%95%E6%A0%87%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2018/12/20/InnoDB%E7%B4%A2%E5%BC%95%E5%92%8C%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -366,7 +362,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/04/15/%E6%B5%8B%E8%AF%95%E6%A0%87%E9%A2%98/" class="post-title-link" itemprop="url">测试标题</a>
+          <a href="/2018/12/20/InnoDB%E7%B4%A2%E5%BC%95%E5%92%8C%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">InnoDB索引和使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -377,15 +373,28 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-04-15 14:59:44" itemprop="dateCreated datePublished" datetime="2020-04-15T14:59:44+08:00">2020-04-15</time>
+      <time title="创建时间：2018-12-20 11:09:37" itemprop="dateCreated datePublished" datetime="2018-12-20T11:09:37+08:00">2018-12-20</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-08-20 15:05:32" itemprop="dateModified" datetime="2021-08-20T15:05:32+08:00">2021-08-20</time>
+        <time title="修改时间：2021-09-06 20:48:58" itemprop="dateModified" datetime="2021-09-06T20:48:58+08:00">2021-09-06</time>
       </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/innodb/" itemprop="url" rel="index"><span itemprop="name">innodb</span></a>
+        </span>
+    </span>
 
   
 </div>
@@ -397,7 +406,100 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>hello，测试内容</p>
+          <p>了解B+树前，先了解一下二叉查找树和平衡二叉树。二叉查找树规定（非严谨定义）左子树键值小于根键值，根键值小于右子树键值。<br>//二叉树查找树图片</p>
+<pre><code>平衡二叉树在二叉查找树的基础上，还要求任意节点的左右子树高度差不超过1，目的是通过降低树的高度来减少查询次数。</code></pre><p>//平衡二叉树图片</p>
+<pre><code>B+树的定义较为复杂，先看一个高度为2的B+树：</code></pre><p>//B+树图片</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/12/20/InnoDB%E7%B4%A2%E5%BC%95%E5%92%8C%E4%BD%BF%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2018/03/27/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/03/27/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git/" class="post-title-link" itemprop="url">深入理解Git</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-03-27 09:13:27" itemprop="dateCreated datePublished" datetime="2018-03-27T09:13:27+08:00">2018-03-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:48:58" itemprop="dateModified" datetime="2021-09-06T20:48:58+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BB%93%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">仓库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BB%93%E5%BA%93/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Git是一套内容寻址(content-addressable)文件系统</p>
 
       
     </div>
@@ -416,6 +518,616 @@
 
 
 
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2017/07/17/Docker%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/07/17/Docker%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/" class="post-title-link" itemprop="url">Docker环境变量</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-07-17 10:46:05" itemprop="dateCreated datePublished" datetime="2017-07-17T10:46:05+08:00">2017-07-17</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:54:46" itemprop="dateModified" datetime="2021-09-06T20:54:46+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%B9%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">容器</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%B9%E5%99%A8/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol>
+<li><p>通过执行docker-compose所在的shell环境注入</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">web:</span><br><span class="line">  image: &quot;webapp:$&#123;TAG&#125;&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过文件注入<br>2.1 默认使用.env中的变量</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">   $ cat .env</span><br><span class="line">TAG=v1.5</span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat docker-compose.yml</span><br><span class="line">version: &#x27;2.0&#x27;</span><br><span class="line">services:</span><br><span class="line">  web:</span><br><span class="line">    image: &quot;webapp:$&#123;TAG&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>2.2 指定环境变量文件</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//同docker run –env-file=web-variables.env</span><br><span class="line">//docker-compose -f web-variables.env</span><br><span class="line">web:</span><br><span class="line">  env_file:</span><br><span class="line">	- web-variables.env</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过docker-compose.yml注入</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//同docker run -e DEBUG=1</span><br><span class="line">web:</span><br><span class="line">  environment:</span><br><span class="line">	- DEBUG=1</span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//同docker run -e DEBUG</span><br><span class="line">web:</span><br><span class="line">  environment:</span><br><span class="line">	- DEBUG //无赋值的环境变量</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过启动命令注入</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run</span><br><span class="line">	docker run -e DEBUG=1</span><br><span class="line">	docker run -e DEBUG // VARIABLE从shell环境变量中获取，同第1条</span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker-compose run</span><br><span class="line">	docker-compose run -e DEBUG=1 </span><br><span class="line">	docker-compose run -e DEBUG // VARIABLE从shell环境变量中获取，同第1条</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>优先级从大到小</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Shell </span><br><span class="line">Compose file</span><br><span class="line">Environment file</span><br><span class="line">Dockerfile</span><br><span class="line">Variable is not defined</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2017/05/17/CodeIgniter%E9%92%A9%E5%AD%90%E5%92%8Cautoload%E7%9B%B8%E5%86%B2%E7%AA%81%E7%9A%84BUG%EF%BC%9A%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8autoload/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/05/17/CodeIgniter%E9%92%A9%E5%AD%90%E5%92%8Cautoload%E7%9B%B8%E5%86%B2%E7%AA%81%E7%9A%84BUG%EF%BC%9A%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8autoload/" class="post-title-link" itemprop="url">CodeIgniter钩子和autoload相冲突的BUG：无法使用autoload</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-05-17 09:50:09" itemprop="dateCreated datePublished" datetime="2017-05-17T09:50:09+08:00">2017-05-17</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:48:58" itemprop="dateModified" datetime="2021-09-06T20:48:58+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/codeigniter/" itemprop="url" rel="index"><span itemprop="name">codeigniter</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>BUG出现的原因是未正确使用钩子——至少没有按Codeigniter的要求来使用：我们的钩子类继承了CI_Controller，但阅读源码后发现不能这么干。</p>
+<p>当我们 new 一个自己定义的 Controller 的时候（发生在 <code>system/core/Codeigniter.php</code>），CI_Controller 的构造方法会被执行，存储于静态变量<code>$_is_loaded</code>（可以通过is_loaded()调用）里的类都会被传入<code>load_class()</code>加载一遍，而 load_class 方法在引入文件后，不会直接 new 一个传入的类，它会先给传入的类名加上 CI_ 前缀再创建对象。即 new “CI_{$class}”。问题就出现在这里。</p>
+<pre><code>load_class给传入的类名自动加 CI_ 前缀是写死在代码里的，不能通过传入其他参数改变它的行为。个人猜测这样做是为了防止开发者滥用 load_class：框架维护人员通过 load_class 加载框架核心类，开发者使用 Loader 来加载业务相关的类。</code></pre><p>解决问题的方法就是，保证每次用户访问最多执行一次 CI_Controller 的构造方法。如果要在钩子里使用 Loader（例如 load-&gt;model()、load-&gt;database()），可以使用全局的 &amp;get_instance() 得到的 CI_Controller全局静态实例来加载。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用CI_Controller的全局静态实例</span></span><br><span class="line"><span class="keyword">$this</span>-&gt;ci =&amp; get_instance();</span><br><span class="line"><span class="keyword">$this</span>-&gt;ci-&gt;load =&amp; load_class(<span class="string">&#x27;Loader&#x27;</span>, <span class="string">&#x27;core&#x27;</span>);</span><br><span class="line"><span class="keyword">$this</span>-&gt;ci-&gt;load-&gt;model(<span class="string">&#x27;api_model&#x27;</span>);</span><br><span class="line"><span class="keyword">$this</span>-&gt;ci-&gt;api_model-&gt;setCaller(<span class="keyword">$this</span>-&gt;appid);</span><br><span class="line"><span class="comment">//model里正常连接数据库</span></span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/05/17/CodeIgniter%E9%92%A9%E5%AD%90%E5%92%8Cautoload%E7%9B%B8%E5%86%B2%E7%AA%81%E7%9A%84BUG%EF%BC%9A%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8autoload/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2017/04/20/%E6%8F%90%E9%AB%98%E5%89%8D%E7%AB%AF%E5%92%8C%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AF%B9%E6%8E%A5%E6%95%88%E7%8E%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/04/20/%E6%8F%90%E9%AB%98%E5%89%8D%E7%AB%AF%E5%92%8C%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AF%B9%E6%8E%A5%E6%95%88%E7%8E%87/" class="post-title-link" itemprop="url">提高前端和后端的对接效率</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-04-20 11:36:42" itemprop="dateCreated datePublished" datetime="2017-04-20T11:36:42+08:00">2017-04-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:48:58" itemprop="dateModified" datetime="2021-09-06T20:48:58+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="一、基本"><a href="#一、基本" class="headerlink" title="一、基本"></a>一、基本</h1><ul>
+<li><p>模块化适用</p>
+<ul>
+<li><p>对象创建</p>
+</li>
+<li><p>model模板</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="二、后端交互"><a href="#二、后端交互" class="headerlink" title="二、后端交互"></a>二、后端交互</h1><ul>
+<li>和后端的交互就是数据的变换过程：收集、传输、展示 （目前只有少量处理数据）</li>
+</ul>
+<h1 id="三、数据、操作的验证：触发-反馈"><a href="#三、数据、操作的验证：触发-反馈" class="headerlink" title="三、数据、操作的验证：触发-反馈"></a>三、数据、操作的验证：触发-反馈</h1>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/04/20/%E6%8F%90%E9%AB%98%E5%89%8D%E7%AB%AF%E5%92%8C%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AF%B9%E6%8E%A5%E6%95%88%E7%8E%87/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2017/03/20/%E6%B6%88%E6%81%AF%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%BF%E7%94%A8%E5%BF%83%E5%BE%97%20rabbitmq_redis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/03/20/%E6%B6%88%E6%81%AF%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%BF%E7%94%A8%E5%BF%83%E5%BE%97%20rabbitmq_redis/" class="post-title-link" itemprop="url">消息系统的使用心得 rabbitmq_redis</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-03-20 10:53:04" itemprop="dateCreated datePublished" datetime="2017-03-20T10:53:04+08:00">2017-03-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:54:12" itemprop="dateModified" datetime="2021-09-06T20:54:12+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/rabbitmq/" itemprop="url" rel="index"><span itemprop="name">rabbitmq</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>使用rabbitmq和redis有一段时间了，有一些心得体会：<br>rabbitmq使用的php-amqplib，exchange使用的direct，消息持久化，1h后过期；队列自动删除，7天后过期；</p>
+<p>监听消息时的优缺点：<br>rabbitmq：</p>
+<pre><code>缺点：
+    1. 一个消费者只能监听一个消息，遇到【消息：动作 = N:1】的时候，要多开几个进程；
+    2. 为了在控制面板查看进程有没有启动，需要给每个队列指定一个名字；
+    3. 必须显式ack/nack；
+
+优点：
+    1. 可以先publish后subscribe。对于publish、subscribe分开上线的情形，可以先上线publish部分；
+    2. 允许一定的消息累积；
+    3. 消息丢失风险可以控制到很低；
+    4. 用来发送需要延时的消息（微信模板/短信/邮件）；
+    5. 消息太多的时候，可以开多个进程，轮流接收处理消息；</code></pre><p>redis：</p>
+<pre><code>缺点：
+    1. sub端断开的时候会丢失消息（crontab五个星号不是常驻的意思，仅仅表示每分钟都会执行）；
+    2. 进程容易自动结束（1分钟左右）；
+    3. 必须先开sub端，再pub消息，否则会丢失；
+优点：
+    1. 可以同时监听多个队列的消息；
+    2. 使用很方便，不需要关注消息过期，队列名字之类的；</code></pre>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/03/20/%E6%B6%88%E6%81%AF%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%BF%E7%94%A8%E5%BF%83%E5%BE%97%20rabbitmq_redis/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2017/02/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/02/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">深入理解CI框架：数据库的加载过程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-02-15 16:48:30" itemprop="dateCreated datePublished" datetime="2017-02-15T16:48:30+08:00">2017-02-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:58:05" itemprop="dateModified" datetime="2021-09-06T20:58:05+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/codeigniter/" itemprop="url" rel="index"><span itemprop="name">codeigniter</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>说明：没特别指明的情况下，本文涉及的Codeigniter均为3.1.2版。</p>
+<hr>
+<p>要在 CI 框架里使用数据库，你可以显示地加载它：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;load-&gt;database(db_to_load);</span><br></pre></td></tr></table></figure>
+<p>也可以在加载 model 的时候顺带加载数据库：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/02/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://liubole.github.io/2016/12/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%BF%90%E8%BD%AC%E8%B5%B7%E6%9D%A5%EF%BC%88%E5%AE%9E%E8%B7%B5%E7%AF%87%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tricolor">
+      <meta itemprop="description" content="农民工">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夜色">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2016/12/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%BF%90%E8%BD%AC%E8%B5%B7%E6%9D%A5%EF%BC%88%E5%AE%9E%E8%B7%B5%E7%AF%87%EF%BC%89/" class="post-title-link" itemprop="url">深入理解CI框架：框架如何运转起来（实践篇）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-12-30 14:24:52" itemprop="dateCreated datePublished" datetime="2016-12-30T14:24:52+08:00">2016-12-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-06 20:58:05" itemprop="dateModified" datetime="2021-09-06T20:58:05+08:00">2021-09-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/codeigniter/" itemprop="url" rel="index"><span itemprop="name">codeigniter</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>说明：没特别指明的情况下，本文涉及的Codeigniter均为3.1.2版。</p>
+<hr>
+<p>本篇文章所展示的代码就是：浓（阉）缩（割）后的codeigniter框架，目的就是让大家看明白ci框架的构成和运行始末。有些地方和CI不一样，比如我这里用了controller基类来加载model和view，实际上CI是通过CI_Loader来做的，希望我这样做不会对你们理解CI框架造成影响。</p>
+<p>###准备工作：</p>
+<blockquote>
+<p>1、apache rewrite</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;RewriteEngine On</span><br><span class="line">RewriteBase /</span><br><span class="line">RewriteCond %&#123;REQUEST_FILENAME&#125; !-f</span><br><span class="line">RewriteCond %&#123;REQUEST_FILENAME&#125; !-d</span><br><span class="line">RewriteRule ^(.*)$ index.php?/$<span class="number">1</span> [L]</span><br></pre></td></tr></table></figure>
+<p>2、目录结构（强烈建议把下面的文件放到域名根目录下 =￣ω￣= ，这关系到index.php的路径解析）：</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/12/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3CI%E6%A1%86%E6%9E%B6%EF%BC%9A%E6%A1%86%E6%9E%B6%E5%A6%82%E4%BD%95%E8%BF%90%E8%BD%AC%E8%B5%B7%E6%9D%A5%EF%BC%88%E5%AE%9E%E8%B7%B5%E7%AF%87%EF%BC%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 </div>
   </main>
